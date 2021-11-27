@@ -1,0 +1,24 @@
+{   
+    "emmet.includeLanguages": {
+        "javascript": "javascriptreact",
+        "vue-html": "html",
+        "react": "jsx"
+    },
+    
+    "emmet.showSuggestionsAsSnippets": true,
+    "emmet.triggerExpansionOnTab": true,
+    "emmet.variables": {
+        "lang": "en",
+        "charset": "UTF-8"
+    },
+    "emmet.excludeLanguages": [
+
+        "markdown"
+    ],
+    "emmet.extensionsPath": "jsx",
+    "emmet.preferences": {
+    
+    }
+    
+}
+ 
