@@ -50,6 +50,7 @@ function HeroCarousel() {
   const [current, setCurrent] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const [searchCategory, setSearchCategory] = useState("Places");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const slide = HERO_SLIDES[current];
 
   useEffect(() => {
@@ -69,12 +70,13 @@ function HeroCarousel() {
             <Image src={s.image} alt={s.title} fill priority={i === 0} className="object-cover" sizes="100vw" />
           </div>
         ))}
-        <div className="absolute inset-0 bg-gradient-to-b from-[#2D241E]/30 via-transparent to-[#2D241E]/80" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-[#2D241E]/90" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(192,99,80,0.35)_0%,transparent_70%)]" />
 
         {/* Content */}
         <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-6">
           <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#C06350] text-white text-[10px] font-bold rounded-full uppercase tracking-widest mb-4">
-            <Zap className="w-3 h-3" />{slide.tag}
+           {slide.tag}
           </span>
           <h1 className="text-4xl md:text-6xl font-black text-white leading-[1.1] tracking-tight mb-4 drop-shadow-sm">
             {slide.title}
@@ -83,19 +85,33 @@ function HeroCarousel() {
             {slide.subtitle}
           </p>
 
-          {/* Discovery Search Bar - Redesigned */}
+          {/* Discovery Search Bar - Custom Dropdown */}
           <div className="w-full max-w-xl bg-white/95 backdrop-blur-sm rounded-2xl p-1.5 flex items-center gap-1 transition-all focus-within:ring-2 ring-[#C06350]/20">
-            <div className="relative flex items-center bg-[#F9F1ED] rounded-xl px-3 py-2.5">
-              <select
-                value={searchCategory}
-                onChange={e => setSearchCategory(e.target.value)}
-                className="appearance-none bg-transparent text-[#C06350] text-xs font-bold outline-none cursor-pointer pr-4"
+            <div className="relative shrink-0">
+              <button 
+                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                className="flex items-center gap-2 bg-[#F9F1ED] hover:bg-[#F2E8E4] transition-colors rounded-xl px-4 py-2.5 text-[#C06350] text-xs font-bold outline-none"
               >
-                {SEARCH_CATEGORIES.map(c => <option key={c}>{c}</option>)}
-              </select>
-              <div className="absolute right-2 pointer-events-none text-[#C06350]">
-                <ChevronLeft className="w-3 h-3 rotate-[270deg]" />
-              </div>
+                {searchCategory}
+                <ChevronLeft className={`w-3 h-3 transition-transform ${isDropdownOpen ? "rotate-90" : "-rotate-90"}`} />
+              </button>
+              
+              {isDropdownOpen && (
+                <div className="absolute top-full left-0 mt-2 w-32 bg-white rounded-xl shadow-xl shadow-black/5 border border-[#C06350]/5 overflow-hidden z-50 py-1 animate-in fade-in zoom-in-95 duration-150">
+                  {SEARCH_CATEGORIES.map(c => (
+                    <button
+                      key={c}
+                      onClick={() => {
+                        setSearchCategory(c);
+                        setIsDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-4 py-2 text-xs font-semibold transition-colors ${searchCategory === c ? "text-[#C06350] bg-[#F9F1ED]" : "text-[#2D241E]/60 hover:bg-[#F9F1ED]/50"}`}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
             
             <input
@@ -123,7 +139,7 @@ function HeroCarousel() {
         {/* Indicators */}
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-3">
           {HERO_SLIDES.map((_, i) => (
-            <button key={i} onClick={() => setCurrent(i)} className={`h-1.5 rounded-full transition-all ${i === current ? "w-8 bg-white" : "w-1.5 bg-white/40"}`} />
+            <button key={i} onClick={() => setCurrent(i)} className={`h-1.5 rounded-full transition-all ${i === current ? "w-8 bg-[#C06350]" : "w-1.5 bg-white/40"}`} />
           ))}
         </div>
       </div>
