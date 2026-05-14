@@ -56,22 +56,29 @@ export async function middleware(request: NextRequest) {
 		}
 	);
 
-	await supabase.auth.getSession();
+	const { data: { session } } = await supabase.auth.getSession();
 
-	const { data } = await supabase.auth.getSession();
+	const isAdminRoute = pathname.startsWith('/admin');
+	const isEditorRoute = pathname.startsWith('/editor');
 
-	if (data.session) {
-		if (
-			// protect this page only admin can access this /dashboard/members
-			data.session.user.user_metadata.role !== "admin"
-		) {
+	if (isAdminRoute) {
+		if (!session || session.user.user_metadata?.role !== "ADMIN") {
 			return NextResponse.redirect(new URL("/", request.url));
 		}
-	} else {
-		return NextResponse.redirect(new URL("/", request.url));
 	}
+
+	if (isEditorRoute) {
+		if (!session || !["EDITOR", "ADMIN"].includes(session.user.user_metadata?.role)) {
+			return NextResponse.redirect(new URL("/", request.url));
+		}
+	}
+
+	return response;
 }
 
 export const config = {
-	matcher: ["/dashboard/:path*"],
+	matcher: [
+        "/admin/:path*", 
+        "/editor/:path*"
+    ],
 };

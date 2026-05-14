@@ -35,14 +35,13 @@ export default function BlogSection() {
   const groupedBlogs = useMemo(() => groupBlogsByCategory(dummyBlogs), [dummyBlogs]);
 
   return (
-    <div>
-          <h3 className="text-[#C06350] text-2xl font-semibold font-raleway">Latest Blogs</h3>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-10 min-h-[80vh] pb-12 mt-12">
-        
-      {groupedBlogs.map(([category, blogs]) => (
-        <BlogCard key={`${category}-${blogs[0].date}`} blogs={blogs} />
-      ))}
-    </div>
+    <div className="space-y-6 py-4 font-raleway">
+      <h3 className="text-[#C06350] text-xl font-bold font-montserrat uppercase tracking-wider border-b border-[#C06350]/10 pb-2">Latest Blogs</h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {groupedBlogs.map(([category, blogs]) => (
+          <BlogCard key={`${category}-${blogs[0].date}`} blogs={blogs} />
+        ))}
+      </div>
     </div>
   );
 }

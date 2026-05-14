@@ -1,241 +1,197 @@
+/* Google Fonts must be first */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-
-.text-shadow {
-  text-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
-}
-
-
-
 @font-face {
-  font-family: "Anyelir";
-  src: url("/fonts/AnyelirScript-BoldItalic.otf") format("truetype");
-  font-style: normal;
+  font-family: 'Anyelir';
+  src: url('/fonts/AnyelirScript-BoldItalic.otf') format('opentype');
 }
 @font-face {
-  font-family: "Night Michy";
-  src: url("/fonts/Night Michy.otf") format("truetype");
-  font-style: normal;
+  font-family: 'Night Michy';
+  src: url('/fonts/Night Michy.otf') format('opentype');
 }
-
-/* Merriweather */
 @font-face {
-  font-family: "Merriweather";
-  src: url("/fonts/Merriweather/Merriweather-Light.ttf") format("truetype");
-  font-weight: 300;
-  font-style: normal;
+  font-family: 'Bailamore';
+  src: url('/fonts/Bailamore FPU.ttf') format('truetype');
 }
 
-@font-face {
-  font-family: "Merriweather";
-  src: url("/fonts/Merriweather/Merriweather-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Merriweather";
-  src: url("/fonts/Merriweather/Merriweather-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Merriweather";
-  src: url("/fonts/Merriweather/Merriweather-Black.ttf") format("truetype");
-  font-weight: 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Merriweather";
-  src: url("/fonts/Merriweather/Merriweather-Italic.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-}
-
-/* Lato */
-@font-face {
-  font-family: "Lato";
-  src: url("/fonts/lato/Lato-Light.ttf") format("truetype");
-  font-weight: 300;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Lato";
-  src: url("/fonts/lato/Lato-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Lato";
-  src: url("/fonts/lato/Lato-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Lato";
-  src: url("/fonts/lato/Lato-Black.ttf") format("truetype");
-  font-weight: 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Lato";
-  src: url("/fonts/lato/Lato-Italic.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-}
-
-/* Oswald */
-@font-face {
-  font-family: "Oswald";
-  src: url("/fonts/oswald/Oswald-Light.ttf") format("truetype");
-  font-weight: 300;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Oswald";
-  src: url("/fonts/oswald/Oswald-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Oswald";
-  src: url("/fonts/oswald/Oswald-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Oswald";
-  src: url("/fonts/oswald/Oswald-Black.ttf") format("truetype");
-  font-weight: 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Oswald";
-  src: url("/fonts/oswald/Oswald-Italic.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-}
-
-/* Raleway */
-@font-face {
-  font-family: "Raleway";
-  src: url("/fonts/raleway/Raleway-Light.ttf") format("truetype");
-  font-weight: 300;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Raleway";
-  src: url("/fonts/raleway/Raleway-Regular.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Raleway";
-  src: url("/fonts/raleway/Raleway-Bold.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Raleway";
-  src: url("/fonts/raleway/Raleway-Black.ttf") format("truetype");
-  font-weight: 900;
-  font-style: normal;
-}
-
-@font-face {
-  font-family: "Raleway";
-  src: url("/fonts/raleway/Raleway-Italic.ttf") format("truetype");
-  font-weight: 400;
-  font-style: italic;
-}
-
- 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 3.9%;
-
+    --background: 25 100% 94%;
+    --foreground: 25 15% 15%;
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 3.9%;
- 
+    --card-foreground: 25 15% 15%;
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 3.9%;
- 
-    --primary: 240 5.9% 10%;
+    --popover-foreground: 25 15% 15%;
+    --primary: 15 60% 50%;
     --primary-foreground: 0 0% 98%;
- 
-    --secondary: 240 4.8% 95.9%;
-    --secondary-foreground: 240 5.9% 10%;
- 
-    --muted: 240 4.8% 95.9%;
-    --muted-foreground: 240 3.8% 46.1%;
- 
-    --accent: 240 4.8% 95.9%;
-    --accent-foreground: 240 5.9% 10%;
- 
+    --secondary: 35 30% 90%;
+    --secondary-foreground: 25 15% 15%;
+    --muted: 25 100% 90%;
+    --muted-foreground: 25 10% 40%;
+    --accent: 35 80% 60%;
+    --accent-foreground: 25 15% 15%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
-
-    --border: 240 5.9% 90%;
-    --input: 240 5.9% 90%;
-    --ring: 240 10% 3.9%;
- 
-    --radius: 0.5rem;
+    --border: 15 60% 50% / 0.05;
+    --input: 15 60% 50% / 0.1;
+    --ring: 15 60% 50%;
+    --radius: 0.75rem;
   }
- 
+
   .dark {
-    --background: 240 10% 3.9%;
-    --foreground: 0 0% 98%;
- 
-    --card: 240 10% 3.9%;
-    --card-foreground: 0 0% 98%;
- 
-    --popover: 240 10% 3.9%;
-    --popover-foreground: 0 0% 98%;
- 
-    --primary: 0 0% 98%;
-    --primary-foreground: 240 5.9% 10%;
- 
-    --secondary: 240 3.7% 15.9%;
-    --secondary-foreground: 0 0% 98%;
- 
-    --muted: 240 3.7% 15.9%;
-    --muted-foreground: 240 5% 64.9%;
- 
-    --accent: 240 3.7% 15.9%;
-    --accent-foreground: 0 0% 98%;
- 
+    --background: 25 15% 10%;
+    --foreground: 30 100% 98%;
+    --card: 25 15% 12%;
+    --card-foreground: 30 100% 98%;
+    --popover: 25 15% 10%;
+    --popover-foreground: 30 100% 98%;
+    --primary: 15 60% 50%;
+    --primary-foreground: 30 100% 98%;
+    --secondary: 25 15% 18%;
+    --secondary-foreground: 30 100% 98%;
+    --muted: 25 15% 18%;
+    --muted-foreground: 30 10% 70%;
+    --accent: 35 80% 60%;
+    --accent-foreground: 25 15% 10%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
- 
-    --border: 240 3.7% 15.9%;
-    --input: 240 3.7% 15.9%;
-    --ring: 240 4.9% 83.9%;
+    --destructive-foreground: 30 100% 98%;
+    --border: 25 15% 18%;
+    --input: 25 15% 18%;
+    --ring: 15 60% 50%;
+  }
+
+  * {
+    @apply border-border;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #FFFAF5;
+    color: #2D241E;
+    font-family: 'Montserrat', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: #2D241E;
+  }
+
+  a {
+    text-decoration: none;
   }
 }
 
+@layer utilities {
+  /* Scrollbar hiding */
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
- 
-@layer base {
-  * {
-    @apply border-border;
+  /* ─── Consistent page layout ─── */
+  .page-container {
+    max-width: 1280px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 3rem 1.25rem;
+    padding-top: 5rem; /* Offset for fixed navbar */
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
   }
-  body {
-    @apply bg-background text-foreground;
+
+  @media (min-width: 1024px) {
+    .page-container {
+      padding-left: 1.5rem;
+      padding-right: 1.5rem;
+    }
+  }
+
+  /* ─── Page header typography ─── */
+  .page-header-title {
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 800;
+    color: #2D241E;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+
+  .page-header-sub {
+    font-size: 0.9375rem;
+    color: rgba(45, 36, 30, 0.5);
+    font-weight: 400;
+    margin-top: 0.5rem;
+    max-width: 32rem;
+    line-height: 1.6;
+  }
+
+  /* ─── Section label ─── */
+  .section-label {
+    display: block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #C06350;
+  }
+
+  /* ─── Filter chips ─── */
+  .filter-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 1rem;
+    border-radius: 999px;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    background-color: #F2EAE5;
+    color: rgba(45, 36, 30, 0.55);
+    border: none;
+    outline: none;
+  }
+  .filter-chip:hover {
+    background-color: rgba(192, 99, 80, 0.1);
+    color: #C06350;
+  }
+  .filter-chip-active {
+    background-color: #C06350 !important;
+    color: white !important;
+  }
+
+  /* ─── Cards ─── */
+  .fctea-card {
+    border-radius: 1rem;
+    overflow: hidden;
+    background-color: white;
+    transition: background-color 0.2s ease;
+  }
+  .fctea-card:hover {
+    background-color: #F9F1ED;
+  }
+
+  /* ─── Gradient text ─── */
+  .gradient-text {
+    background: linear-gradient(135deg, #C06350, #E8956D);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* ─── Text shadow for hero overlays ─── */
+  .text-shadow {
+    text-shadow: 0 2px 20px rgba(45, 36, 30, 0.5);
   }
 }

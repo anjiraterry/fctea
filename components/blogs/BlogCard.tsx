@@ -15,36 +15,38 @@ interface BlogCardProps {
   blogs: Blog[];
 }
 
+import Link from "next/link";
+
 const BlogCard: React.FC<BlogCardProps> = ({ blogs }) => {
   if (blogs.length === 0) return null;
 
-  // Sort blogs by date (assuming ISO format YYYY-MM-DD)
   const sortedBlogs = [...blogs].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   const latestBlog = sortedBlogs[0];
   const otherBlogs = sortedBlogs.slice(1, 3);
 
   return (
-    <div className="rounded-2xl shadow-md bg-[#F8E1DB]   p-4 max-w-md font-raleway text-[#7A7A7A] flex flex-col justify-between ">
-      <p className="text-sm text-gray-700 uppercase font-semibold">{latestBlog.category}</p>
-      <h2 className="text-4xl font-bold mt-2 text-gray-700 hover:text-[#C06350] font-oswald">{latestBlog.title}</h2>
-      <p className="text-sm text-gray-600">{latestBlog.author} • {latestBlog.date}</p>
-      <div className="relative w-full h-48 mt-4">
-        <Image src={latestBlog.image} alt={latestBlog.title} layout="fill" className="rounded-lg object-cover" />
-      </div>
-      <div className="mt-3">
-        {otherBlogs.map((blog) => (
-          <div key={blog.id} className="mt-2 border-b border-[#7A7A7A] p-4">
-            <h3 className="text-md font-semibold text-gray-700 hover:text-[#C06350]  ">{blog.title}</h3>
-            <p className="text-sm text-gray-600">{blog.date}</p>
+    <div className="space-y-6 font-raleway">
+      <Link href={latestBlog.link} className="group block space-y-4">
+        <div className="relative aspect-video rounded-xl overflow-hidden shadow-sm">
+          <Image src={latestBlog.image} alt={latestBlog.title} fill className="object-cover transition-transform group-hover:scale-105" />
+          <div className="absolute top-4 right-4 bg-[#C06350] text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-widest">
+            {latestBlog.category}
           </div>
+        </div>
+        <div className="space-y-2">
+          <h2 className="text-2xl font-bold text-[#2D241E] group-hover:text-[#C06350] transition-colors line-clamp-2">{latestBlog.title}</h2>
+          <p className="text-xs font-bold uppercase tracking-widest text-[#2D241E]/40">{latestBlog.author} • {latestBlog.date}</p>
+        </div>
+      </Link>
+
+      <div className="space-y-4">
+        {otherBlogs.map((blog) => (
+          <Link key={blog.id} href={blog.link} className="group block border-t border-[#C06350]/10 pt-4">
+            <h3 className="text-base font-bold text-[#2D241E] group-hover:text-[#C06350] transition-colors">{blog.title}</h3>
+            <p className="text-[10px] font-bold uppercase tracking-widest text-[#2D241E]/40 mt-1">{blog.date}</p>
+          </Link>
         ))}
       </div>
-      <a
-        href={`/category/${latestBlog.category}`}
-        className="underline font-semibold mt-3 inline-block hover:text-[#C06350]"
-      >
-        See More →
-      </a>
     </div>
   );
 };

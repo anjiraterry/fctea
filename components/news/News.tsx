@@ -6,74 +6,64 @@ import Link from "next/link";
 import dummyNews, { NewsArticle } from "./dummyNews";
 
 const NewsSection = () => {
-  // Sort news articles by date (latest first)
   const sortedNews = [...dummyNews].sort(
     (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
-  // Extract the latest news article for the featured section
   const [latestNews, ...otherNews] = sortedNews;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 min-h-[0vh] pb-12">
-   
-      <div className="relative lg:col-span-2 rounded-xl overflow-hidden gjustify-between">
-      <div className="text-[#C06350] text-2xl font-semibold font-raleway mb-8 ">Featured News</div>
-      <div className="relative">
-        <Image
-          src={latestNews.image}
-          alt={latestNews.title}
-          width={800}
-          height={450}
-          className="w-full h-[400px] object-cover rounded-md"
-        />
-      
-        <div className="absolute  inset-0 bg-gradient-to-b from-black/0 via-black/30 to-black/50"></div>
-
-        <div className="absolute bottom-6 left-6 text-white z-10">
-          <h2 className="text-2xl font-bold">{latestNews.title}</h2>
-          <p className="text-sm text-gray-300 mt-1">
-            <span className="text-[#C06350]">{latestNews.author}</span> | {latestNews.date}
-          </p>
-        </div>
-        </div>
-
+    <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 font-raleway py-4">
+      {/* Featured News */}
+      <div className="lg:col-span-2 space-y-6">
+        <h3 className="text-[#C06350] text-xl font-bold font-montserrat uppercase tracking-wider border-b border-[#C06350]/10 pb-2">Featured News</h3>
+        <Link href={`/news/${latestNews.id}`} className="group block space-y-4">
+          <div className="relative aspect-video rounded-xl overflow-hidden shadow-sm">
+            <Image
+              src={latestNews.image}
+              alt={latestNews.title}
+              fill
+              className="object-cover transition-transform group-hover:scale-105 duration-700"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#2D241E]/80 via-transparent to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6 text-white space-y-2">
+               <h2 className="text-3xl md:text-5xl font-michy text-[#F8E1DB] leading-tight">{latestNews.title}</h2>
+               <p className="text-xs font-bold uppercase tracking-widest opacity-80">
+                 {latestNews.author} • {latestNews.date}
+               </p>
+            </div>
+          </div>
+        </Link>
       </div>
 
-      {/* Other News List */}
-      <aside>
-        <h3 className="text-[#C06350] text-2xl font-semibold font-raleway mb-8">Latest News</h3>
-        <ul className="space-y-4 mt-4">
-          {otherNews.map((story) => (
-            <li
-              key={story.id}
-              className="flex gap-4 items-center justify-between border-b border-[#4F4F4F] pb-4"
-            >
-              <div>
-                <Link
-                  href="#"
-                  className="text-[#4F4F4F] hover:text-[#C06350] font-bold text-xl"
-                >
-                  {story.title}
-                </Link>
-                <p className="text-sm text-gray-40 mt-4 font-raleway">
-                  <span className="text-[#C06350]">{story.author}</span> | {story.date}
-                </p>
-              </div>
-              <Image
-                src={story.image}
-                alt={story.title}
-                width={80}
-                height={80}
-                className="rounded-md w-20 h-20 object-cover"
-              />
+      {/* Latest News List */}
+      <aside className="space-y-6">
+        <h3 className="text-[#C06350] text-xl font-bold font-montserrat uppercase tracking-wider border-b border-[#C06350]/10 pb-2">Latest News</h3>
+        <ul className="space-y-6">
+          {otherNews.slice(0, 4).map((story) => (
+            <li key={story.id} className="group">
+              <Link href={`/news/${story.id}`} className="flex gap-4 items-center">
+                <div className="flex-1 space-y-1">
+                  <h4 className="text-[#2D241E] group-hover:text-[#C06350] font-bold text-base leading-snug transition-colors line-clamp-2">
+                    {story.title}
+                  </h4>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-[#2D241E]/40">
+                    {story.date}
+                  </p>
+                </div>
+                <div className="relative w-16 h-16 shrink-0 rounded-lg overflow-hidden shadow-sm border border-[#C06350]/5">
+                  <Image
+                    src={story.image}
+                    alt={story.title}
+                    fill
+                    className="object-cover transition-transform group-hover:scale-110"
+                  />
+                </div>
+              </Link>
             </li>
           ))}
         </ul>
       </aside>
-      <div className="w-full h-[180px] bg-red-400"></div>
-      <div className="w-full h-[180px] bg-red-400"></div>
-      <div className="w-full h-[180px] bg-red-400"></div>
     </div>
   );
 };

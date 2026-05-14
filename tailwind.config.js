@@ -25,6 +25,8 @@ module.exports = {
 				lato: ["Lato", "sans-serif"],
 				oswald: ["Oswald", "sans-serif"],
 				raleway: ["Raleway", "sans-serif"],
+				satoshi: ["Satoshi", "sans-serif"],
+				montserrat: ["Montserrat", "sans-serif"],
 			  },
 			backgroundImage: {
 				"graident-dark":
