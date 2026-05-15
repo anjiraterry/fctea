@@ -1,12 +1,7 @@
-import React from "react";
-import { EyeOpenIcon, Pencil1Icon, TrashIcon } from "@radix-ui/react-icons";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-
 import { IBlog } from "@/lib/types";
 import SwitchForm from "./SwitchForm";
-import DeleteAlert from "./DeleteAlert";
 import { readBlogAdmin, updateBlogById } from "@/lib/actions/blog";
+import BlogActions from "./BlogActions";
 
 export default async function BlogTable() {
 	const { data: blogs } = await readBlogAdmin();
@@ -55,7 +50,7 @@ export default async function BlogTable() {
 										name="publish"
 									/>
 
-									<Actions id={blog.id} />
+									<BlogActions blog={blog} />
 								</div>
 							);
 						})}
@@ -65,25 +60,3 @@ export default async function BlogTable() {
 		</>
 	);
 }
-
-const Actions = ({ id }: { id: string }) => {
-	return (
-		<div className="flex items-center gap-2 md:flex-wrap">
-			{/* TODO: change to id */}
-			<Link href={`/blog/${id}`}>
-				<Button className="flex gap-2 items-center" variant="outline">
-					<EyeOpenIcon />
-					View
-				</Button>
-			</Link>
-			<DeleteAlert id={id} />
-
-			<Link href={`/dashboard/blog/edit/${id}`}>
-				<Button className="flex gap-2 items-center" variant="outline">
-					<Pencil1Icon />
-					Edit
-				</Button>
-			</Link>
-		</div>
-	);
-};

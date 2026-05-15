@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { useUser } from "@/lib/store/user";
 import { Search, Bell, Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAppStore } from "@/store/useAppStore";
@@ -19,7 +19,7 @@ const navItems = [
 ];
 
 export default function Navbar() {
-  const { data: session } = useSession();
+  const user = useUser((state) => state.user);
   const pathname = usePathname();
   const { setSearchOpen } = useAppStore();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -55,7 +55,7 @@ export default function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-5 lg:px-6 flex items-center justify-between">
 
-          {/* Logo — Night Michy font only here */}
+          {/* Logo Night Michy font only here */}
           <Link
             href="/"
             className="text-4xl font-michy text-[#C06350] hover:opacity-80 transition-opacity select-none leading-none"
@@ -105,7 +105,7 @@ export default function Navbar() {
             </button>
 
             <div className="ml-2">
-              {session ? (
+              {user ? (
                 <Profile />
               ) : (
                 <Link
@@ -129,7 +129,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile drawer — solid background, no blur */}
+        {/* Mobile drawer solid background, no blur */}
         <div
           className={cn(
             "lg:hidden overflow-hidden transition-all duration-300 ease-in-out bg-[#FFFAF5] border-t border-[#C06350]/10",

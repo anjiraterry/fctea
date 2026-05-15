@@ -6,27 +6,36 @@ import { PersonSchema } from "@/lib/validators";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get("limit") || "20");
-    const cursor = searchParams.get("cursor");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "12");
+    const skip = (page - 1) * limit;
     
     let orderBy: any = { hotScore: "desc" };
 
-    const people = await prisma.person.findMany({
-      take: limit + 1,
-      cursor: cursor ? { id: cursor } : undefined,
-      orderBy,
-      include: {
-        brand: true,
+    const [people, totalCount] = await Promise.all([
+      prisma.person.findMany({
+        where: {},
+        take: limit,
+        skip: skip,
+        orderBy,
+        include: {
+          brand: true,
+        }
+      }),
+      prisma.person.count()
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return successResponse(people, { 
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages,
+        hasMore: page < totalPages
       }
     });
-
-    let nextCursor: typeof cursor | undefined = undefined;
-    if (people.length > limit) {
-      const nextItem = people.pop();
-      nextCursor = nextItem!.id;
-    }
-
-    return successResponse(people, { nextCursor });
   } catch (error) {
     console.error("GET /api/people error:", error);
     return errorResponse("Internal server error", "INTERNAL_ERROR", 500);
@@ -37,10 +46,12 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const validatedData = PersonSchema.parse(body);
+    const { images, ...data } = validatedData;
     
     const newPerson = await prisma.person.create({
       data: {
-        ...validatedData,
+        ...data,
+        avatar: images?.[0],
       }
     });
 

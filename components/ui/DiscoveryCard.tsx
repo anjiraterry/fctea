@@ -1,7 +1,8 @@
-import React from "react";
-import Image from "next/image";
-import { MapPin, Star, Phone, Calendar, Clock, Ticket } from "lucide-react";
+import { MapPin, Star, Phone, Calendar, Clock, Ticket, Bookmark, Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useUser } from "@/lib/store/user";
+import { useState } from "react";
+import { useToast } from "./use-toast";
 
 interface DiscoveryCardProps {
   type: "place" | "event" | "news" | "brand";
@@ -32,6 +33,28 @@ export default function DiscoveryCard({
   price,
   className
 }: DiscoveryCardProps) {
+  const user = useUser((state) => state.user);
+  const { toast } = useToast();
+  const [isSaved, setIsSaved] = useState(false);
+
+  const handleSave = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!user) {
+      toast({
+        title: "Sign in required",
+        description: "Please log in to save your favorite spots.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setIsSaved(!isSaved);
+    toast({
+      title: isSaved ? "Removed from favorites" : "Saved to favorites",
+      description: `${title} has been ${isSaved ? "removed from" : "added to"} your collection.`,
+    });
+  };
+
   return (
     <div className={cn("w-full group font-raleway rounded-xl overflow-hidden", className)}>
       {/* Image Section */}
@@ -42,13 +65,28 @@ export default function DiscoveryCard({
           fill
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
+        
+        {/* Category Badge */}
         {category && (
-          <div className="absolute top-4 right-4 z-10">
-            <span className="text-xs text-[#FFFAF5] px-3 py-1 bg-[#C06350] rounded-full font-semibold uppercase tracking-wider">
+          <div className="absolute top-4 left-4 z-10">
+            <span className="text-[10px] text-[#FFFAF5] px-3 py-1 bg-[#C06350] rounded-full font-bold uppercase tracking-widest">
               {category}
             </span>
           </div>
         )}
+
+        {/* Save Button */}
+        <button
+          onClick={handleSave}
+          className={cn(
+            "absolute top-4 right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-lg backdrop-blur-md",
+            isSaved 
+              ? "bg-[#C06350] text-white" 
+              : "bg-white/20 text-white hover:bg-white hover:text-[#C06350]"
+          )}
+        >
+          {isSaved ? <Heart className="w-5 h-5 fill-current" /> : <Bookmark className="w-5 h-5" />}
+        </button>
       </div>
 
       {/* Info Section */}

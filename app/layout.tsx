@@ -9,6 +9,7 @@ import { Toaster } from "@/components/ui/toaster";
 import AuthProvider from "@/components/providers/AuthProvider";
 import QueryProvider from "@/components/providers/QueryProvider";
 import Footer from "@/components/Footer";
+import ResourceModal from "@/app/dashboard/components/ResourceModal";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const raleway = Raleway({ subsets: ["latin"], variable: "--font-raleway" });
@@ -62,6 +63,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <main className="flex-1 w-full">{children}</main>
               <Footer />
               <Toaster />
+              <ResourceModal />
             </ThemeProvider>
           </QueryProvider>
         </AuthProvider>

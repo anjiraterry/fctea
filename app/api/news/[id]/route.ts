@@ -5,16 +5,16 @@ import { NewsSchema } from "@/lib/validators";
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const newsItem = await prisma.news.findUnique({
+    const news = await prisma.news.findUnique({
       where: { id: params.id },
       include: {
         brand: true,
       }
     });
 
-    if (!newsItem) return errorResponse("News not found", "NOT_FOUND", 404);
+    if (!news) return errorResponse("News not found", "NOT_FOUND", 404);
 
-    return successResponse(newsItem);
+    return successResponse(news);
   } catch (error) {
     console.error("GET /api/news/[id] error:", error);
     return errorResponse("Internal server error", "INTERNAL_ERROR", 500);

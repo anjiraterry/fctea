@@ -6,12 +6,19 @@ import { EventSchema } from "@/lib/validators";
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get("limit") || "20");
-    const cursor = searchParams.get("cursor");
+    const page = parseInt(searchParams.get("page") || "1");
+    const limit = parseInt(searchParams.get("limit") || "12");
+    const skip = (page - 1) * limit;
     
     const filter: any = {};
     const category = searchParams.get("category");
-    if (category) filter.categoryId = category;
+    if (category && category !== "All") {
+      filter.OR = [
+        { categoryId: category },
+        { category: { name: { equals: category, mode: 'insensitive' } } },
+        { category: { slug: { equals: category, mode: 'insensitive' } } }
+      ];
+    }
     
     let orderBy: any = { hotScore: "desc" };
     if (searchParams.get("sort") === "upcoming") {
@@ -19,27 +26,34 @@ export async function GET(request: NextRequest) {
       filter.startDate = { gte: new Date() }; // Only future events
     }
 
-    const events = await prisma.event.findMany({
-      where: filter,
-      take: limit + 1,
-      cursor: cursor ? { id: cursor } : undefined,
-      orderBy,
-      include: {
-        category: true,
-        brand: true,
-        place: true,
-        tags: true,
-        media: true
+    const [events, totalCount] = await Promise.all([
+      prisma.event.findMany({
+        where: filter,
+        take: limit,
+        skip: skip,
+        orderBy,
+        include: {
+          category: true,
+          brand: true,
+          place: true,
+          tags: true,
+          media: true
+        }
+      }),
+      prisma.event.count({ where: filter })
+    ]);
+
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return successResponse(events, { 
+      pagination: {
+        page,
+        limit,
+        totalCount,
+        totalPages,
+        hasMore: page < totalPages
       }
     });
-
-    let nextCursor: typeof cursor | undefined = undefined;
-    if (events.length > limit) {
-      const nextItem = events.pop();
-      nextCursor = nextItem!.id;
-    }
-
-    return successResponse(events, { nextCursor });
   } catch (error) {
     console.error("GET /api/events error:", error);
     return errorResponse("Internal server error", "INTERNAL_ERROR", 500);
@@ -50,10 +64,19 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const validatedData = EventSchema.parse(body);
+    const { images, ...data } = validatedData;
     
     const newEvent = await prisma.event.create({
       data: {
-        ...validatedData,
+        ...data,
+        startDate: new Date(data.startDate),
+        endDate: data.endDate ? new Date(data.endDate) : undefined,
+        media: images ? {
+          create: images.map(url => ({ url, type: "IMAGE" }))
+        } : undefined
+      },
+      include: {
+        media: true
       }
     });
 

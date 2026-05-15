@@ -19,6 +19,11 @@ export default function NavLinks() {
 			Icon: PersonIcon,
 			text: "users",
 		},
+		{
+			href: "/dashboard/sync",
+			Icon: ReaderIcon,
+			text: "sync",
+		},
 	];
 
 	return (
@@ -28,8 +33,8 @@ export default function NavLinks() {
 					<Link
 						href={href}
 						className={cn(
-							"text-sm text-gray-400 flex  items-center gap-1 hover:underline transition-all",
-							{ "text-green-500 underline": pathname === href }
+							"text-sm text-[#2D241E]/40 flex items-center gap-1 hover:text-[#C06350] transition-all",
+							{ "text-[#C06350] font-bold": pathname === href }
 						)}
 						key={index}
 					>

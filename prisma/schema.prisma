@@ -1,91 +1,72 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
-  provider = "prisma-client-js"
+  provider   = "prisma-client-js"
+  engineType = "library"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-// --- User System ---
-enum Role {
-  VIEWER
-  EDITOR
-  ADMIN
-}
-
 model User {
-  id       String    @id @default(uuid()) // Supabase auth.users.id
-  email    String    @unique
-  role     Role      @default(VIEWER)
-  profile  Profile?
-  sessions Session[]
-
-  // Engagement Relations
+  id            String          @id @default(uuid())
+  email         String          @unique
+  role          Role            @default(VIEWER)
+  preferences   Json?           @default("{\"theme\": \"light\", \"language\": \"en\", \"notifications\": true}")
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
   bookmarks     Bookmark[]
-  reactions     Reaction[]
   comments      Comment[]
-  views         View[]
-  searchHistory SearchHistory[]
   follows       Follow[]
-
-  // Editorial Relations
-  revisions Revision[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  profile       Profile?
+  reactions     Reaction[]
+  revisions     Revision[]
+  searchHistory SearchHistory[]
+  sessions      Session[]
+  views         View[]
 }
 
 model Profile {
-  id        String  @id @default(cuid())
-  userId    String  @unique
-  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id        String   @id @default(cuid())
+  userId    String   @unique
   firstName String?
   lastName  String?
   avatar    String?
   bio       String?
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
   userId       String
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
-// --- Core Content Models ---
-
 model Brand {
-  id          String  @id @default(cuid())
+  id          String       @id @default(cuid())
   name        String
-  slug        String  @unique
-  description String? @db.Text
+  slug        String       @unique
+  description String?
   logo        String?
   coverImage  String?
   website     String?
   instagram   String?
   twitter     String?
   tiktok      String?
-  verified    Boolean @default(false)
-  isFeatured  Boolean @default(false)
-  hotScore    Float   @default(0)
-
-  // Relations
-  places      Place[]
-  events      Event[]
-  people      Person[]
+  verified    Boolean      @default(false)
+  isFeatured  Boolean      @default(false)
+  hotScore    Float        @default(0)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   blogs       Blog[]
+  events      Event[]
   news        News[]
-  collections Collection[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  people      Person[]
+  places      Place[]
+  collections Collection[] @relation("BrandToCollection")
 }
 
 model Area {
@@ -93,9 +74,9 @@ model Area {
   name        String
   slug        String   @unique
   description String?
-  places      Place[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  places      Place[]
 }
 
 model PlaceCategory {
@@ -115,41 +96,35 @@ model PlaceImage {
 }
 
 model Place {
-  id           String  @id @default(cuid())
-  name         String
-  slug         String  @unique
-  description  String? @db.Text
-  address      String?
-  coordinates  Json? // { lat: Float, lng: Float }
-  phone        String?
-  website      String?
-  instagram    String?
-  openingHours Json?
-  priceLevel   Int? // 1-4
-  rating       Float?
-  hotScore     Float   @default(0)
-  isFeatured   Boolean @default(false)
-  isPublished  Boolean @default(true)
-
-  // Relations
-  brandId    String?
-  brand      Brand?         @relation(fields: [brandId], references: [id])
-  categoryId String?
-  category   PlaceCategory? @relation(fields: [categoryId], references: [id])
-  areaId     String?
-  area       Area?          @relation(fields: [areaId], references: [id])
-
-  images      PlaceImage[]
-  tags        Tag[]
-  events      Event[]
-  collections Collection[]
-  people      Person[]
-
-  // External Mapping
+  id               String            @id @default(cuid())
+  name             String
+  slug             String            @unique
+  description      String?
+  address          String?
+  coordinates      Json?
+  phone            String?
+  website          String?
+  instagram        String?
+  openingHours     Json?
+  priceLevel       Int?
+  rating           Float?
+  hotScore         Float             @default(0)
+  isFeatured       Boolean           @default(false)
+  isPublished      Boolean           @default(true)
+  brandId          String?
+  categoryId       String?
+  areaId           String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  events           Event[]
   externalMappings ExternalMapping[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  area             Area?             @relation(fields: [areaId], references: [id])
+  brand            Brand?            @relation(fields: [brandId], references: [id])
+  category         PlaceCategory?    @relation(fields: [categoryId], references: [id])
+  images           PlaceImage[]
+  collections      Collection[]      @relation("CollectionToPlace")
+  people           Person[]          @relation("PersonToPlace")
+  tags             Tag[]             @relation("PlaceToTag")
 }
 
 model EventCategory {
@@ -160,174 +135,151 @@ model EventCategory {
 }
 
 model Event {
-  id          String    @id @default(cuid())
-  title       String
-  slug        String    @unique
-  description String?   @db.Text
-  startDate   DateTime
-  endDate     DateTime?
-  venue       String?
-  ticketUrl   String?
-  organizer   String?
-  price       String? // e.g. "Free", "5000 NGN"
-  hotScore    Float     @default(0)
-  isFeatured  Boolean   @default(false)
-
-  // Relations
-  categoryId String?
-  category   EventCategory? @relation(fields: [categoryId], references: [id])
-  brandId    String?
-  brand      Brand?         @relation(fields: [brandId], references: [id])
-  placeId    String?
-  place      Place?         @relation(fields: [placeId], references: [id])
-
-  tags        Tag[]
-  media       Media[]
-  collections Collection[]
-  people      Person[]
-
-  // External Mapping
+  id               String            @id @default(cuid())
+  title            String
+  slug             String            @unique
+  description      String?
+  startDate        DateTime
+  endDate          DateTime?
+  venue            String?
+  ticketUrl        String?
+  organizer        String?
+  price            String?
+  hotScore         Float             @default(0)
+  isFeatured       Boolean           @default(false)
+  categoryId       String?
+  brandId          String?
+  placeId          String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  brand            Brand?            @relation(fields: [brandId], references: [id])
+  category         EventCategory?    @relation(fields: [categoryId], references: [id])
+  place            Place?            @relation(fields: [placeId], references: [id])
   externalMappings ExternalMapping[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  media            Media[]
+  collections      Collection[]      @relation("CollectionToEvent")
+  people           Person[]          @relation("EventToPerson")
+  tags             Tag[]             @relation("EventToTag")
 }
 
 model Person {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
-  slug        String  @unique
-  bio         String? @db.Text
+  slug        String   @unique
+  bio         String?
   avatar      String?
   socialLinks Json?
-  verified    Boolean @default(false)
-  hotScore    Float   @default(0)
-
-  // Relations
-  brandId String?
-  brand   Brand?  @relation(fields: [brandId], references: [id])
-
-  // Implicit m:n for events, blogs, places
-  events Event[]
-  blogs  Blog[]
-  places Place[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  verified    Boolean  @default(false)
+  hotScore    Float    @default(0)
+  brandId     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  brand       Brand?   @relation(fields: [brandId], references: [id])
+  blogs       Blog[]   @relation("BlogToPerson")
+  events      Event[]  @relation("EventToPerson")
+  places      Place[]  @relation("PersonToPlace")
 }
 
 model News {
   id            String    @id @default(cuid())
   title         String
   slug          String    @unique
-  excerpt       String?   @db.Text
-  content       String    @db.Text
+  excerpt       String?
+  content       String
   featuredImage String?
   category      String?
   isBreaking    Boolean   @default(false)
   publishedAt   DateTime?
   hotScore      Float     @default(0)
-
-  brandId String?
-  brand   Brand?  @relation(fields: [brandId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  brandId       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  brand         Brand?    @relation(fields: [brandId], references: [id])
 }
 
 model Blog {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
-  slug        String  @unique
-  content     String  @db.Text // Rich text/JSON blocks
+  slug        String   @unique
+  content     String
   featuredImg String?
-
-  brandId String?
-  brand   Brand?  @relation(fields: [brandId], references: [id])
-
-  tags   Tag[]
-  people Person[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  brandId     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  brand       Brand?   @relation(fields: [brandId], references: [id])
+  people      Person[] @relation("BlogToPerson")
+  tags        Tag[]    @relation("BlogToTag")
 }
 
 model Collection {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
-  slug        String  @unique
-  description String? @db.Text
+  slug        String   @unique
+  description String?
   featuredImg String?
-
-  places Place[]
-  events Event[]
-  brands Brand[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  brands      Brand[]  @relation("BrandToCollection")
+  events      Event[]  @relation("CollectionToEvent")
+  places      Place[]  @relation("CollectionToPlace")
 }
 
 model Tag {
-  id   String @id @default(cuid())
-  name String @unique
-  slug String @unique
-
-  places Place[]
-  events Event[]
-  blogs  Blog[]
+  id     String  @id @default(cuid())
+  name   String  @unique
+  slug   String  @unique
+  blogs  Blog[]  @relation("BlogToTag")
+  events Event[] @relation("EventToTag")
+  places Place[] @relation("PlaceToTag")
 }
 
 model Media {
-  id   String  @id @default(cuid())
-  url  String
-  type String // 'IMAGE', 'VIDEO'
-  alt  String?
-
-  eventId String?
-  event   Event?  @relation(fields: [eventId], references: [id])
-
+  id        String   @id @default(cuid())
+  url       String
+  type      String
+  alt       String?
+  eventId   String?
   createdAt DateTime @default(now())
+  event     Event?   @relation(fields: [eventId], references: [id])
 }
-
-// --- Engagement Models ---
 
 model Bookmark {
   id         String   @id @default(cuid())
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   targetId   String
-  targetType String // PLACE, EVENT, BLOG, BRAND
+  targetType String
   createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Reaction {
   id         String   @id @default(cuid())
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   targetId   String
   targetType String
-  type       String // LIKE, HEART, FIRE, etc.
+  type       String
   createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
   id         String   @id @default(cuid())
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   targetId   String
   targetType String
-  content    String   @db.Text
+  content    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model View {
   id         String   @id @default(cuid())
   userId     String?
-  user       User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
   targetId   String
   targetType String
   createdAt  DateTime @default(now())
+  user       User?    @relation(fields: [userId], references: [id])
 }
 
 model TrendingScore {
@@ -341,21 +293,19 @@ model TrendingScore {
 model SearchHistory {
   id        String   @id @default(cuid())
   userId    String?
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   query     String
   createdAt DateTime @default(now())
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Follow {
   id         String   @id @default(cuid())
   userId     String
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   targetId   String
-  targetType String // BRAND, PERSON, COLLECTION
+  targetType String
   createdAt  DateTime @default(now())
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
-
-// --- Editorial Models ---
 
 model Draft {
   id         String   @id @default(cuid())
@@ -371,9 +321,9 @@ model Revision {
   targetId   String
   targetType String
   editorId   String
-  editor     User     @relation(fields: [editorId], references: [id])
   diff       Json
   createdAt  DateTime @default(now())
+  editor     User     @relation(fields: [editorId], references: [id])
 }
 
 model ScheduledPost {
@@ -387,9 +337,9 @@ model ScheduledPost {
 model HomepageSection {
   id         String   @id @default(cuid())
   title      String
-  type       String // HERO, TRENDING, COLLECTION, etc.
+  type       String
   order      Int
-  contentIds String[] // Array of target IDs
+  contentIds String[]
   isActive   Boolean  @default(true)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -403,29 +353,25 @@ model FeaturedSection {
   createdAt  DateTime @default(now())
 }
 
-// --- Integration Models ---
-
 model ExternalSource {
-  id       String  @id @default(cuid())
-  name     String  @unique // FOURSQUARE, EVENTBRITE, etc.
-  isActive Boolean @default(true)
-
+  id       String            @id @default(cuid())
+  name     String            @unique
+  isActive Boolean           @default(true)
   mappings ExternalMapping[]
   syncLogs SyncLog[]
 }
 
 model ExternalMapping {
   id               String         @id @default(cuid())
-  providerId       String // ID from the external provider
-  internalEntityId String // ID of our internal Place/Event
-  entityType       String // PLACE, EVENT
+  providerId       String
+  internalEntityId String
+  entityType       String
   sourceId         String
-  source           ExternalSource @relation(fields: [sourceId], references: [id])
   lastSyncedAt     DateTime       @default(now())
   rawData          Json?
-
-  place Place? @relation(fields: [internalEntityId], references: [id], map: "place_fk")
-  event Event? @relation(fields: [internalEntityId], references: [id], map: "event_fk")
+  source           ExternalSource @relation(fields: [sourceId], references: [id])
+  event            Event?         @relation(fields: [internalEntityId], references: [id], map: "event_fk")
+  place            Place?         @relation(fields: [internalEntityId], references: [id], map: "place_fk")
 
   @@unique([sourceId, providerId])
 }
@@ -433,19 +379,17 @@ model ExternalMapping {
 model SyncLog {
   id        String         @id @default(cuid())
   sourceId  String
-  source    ExternalSource @relation(fields: [sourceId], references: [id])
-  status    String // SUCCESS, FAILED
-  message   String?        @db.Text
+  status    String
+  message   String?
   createdAt DateTime       @default(now())
+  source    ExternalSource @relation(fields: [sourceId], references: [id])
 }
-
-// --- System Models ---
 
 model Notification {
   id        String   @id @default(cuid())
   userId    String
   title     String
-  message   String   @db.Text
+  message   String
   read      Boolean  @default(false)
   createdAt DateTime @default(now())
 }
@@ -471,6 +415,12 @@ model Report {
   targetType String
   reason     String
   userId     String?
-  status     String   @default("PENDING") // PENDING, RESOLVED, DISMISSED
+  status     String   @default("PENDING")
   createdAt  DateTime @default(now())
+}
+
+enum Role {
+  VIEWER
+  EDITOR
+  ADMIN
 }

@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import {
 	Popover,
@@ -7,10 +8,9 @@ import {
 import Image from "next/image";
 import { useUser } from "@/lib/store/user";
 import { Button } from "@/components/ui/button";
-import { DashboardIcon, LockOpen1Icon } from "@radix-ui/react-icons";
+import { User as UserIcon, LayoutDashboard, LogOut, Settings as SettingsIcon } from "lucide-react";
 import Link from "next/link";
 import { createBrowserClient } from "@supabase/ssr";
-import ManageBill from "../stripe/ManageBill";
 
 export default function Profile() {
 	const supabase = createBrowserClient(
@@ -23,48 +23,71 @@ export default function Profile() {
 	const handleLogout = async () => {
 		await supabase.auth.signOut();
 		setUser(null);
+    window.location.reload();
 	};
-	const isAdmin = user?.role === "admin";
-	const isSub = user?.stripe_customer_id;
+	const isAdmin = user?.role === "ADMIN";
 
 	return (
 		<Popover>
-			<PopoverTrigger>
-				<Image
-					src={user?.image_url!}
-					alt={user?.display_name!}
-					width={50}
-					height={50}
-					className="rounded-full ring-2 ring-green-500"
-				/>
+			<PopoverTrigger className="outline-none">
+        <div className="w-9 h-9 rounded-full bg-[#C06350]/10 border border-[#C06350]/20 overflow-hidden flex items-center justify-center transition-transform active:scale-95">
+          {user?.image_url ? (
+            <Image
+              src={user.image_url}
+              alt={user.display_name || "User"}
+              width={36}
+              height={36}
+              className="object-cover"
+            />
+          ) : (
+            <UserIcon className="w-5 h-5 text-[#C06350]" />
+          )}
+        </div>
 			</PopoverTrigger>
-			<PopoverContent className="space-y-3 divide-y p-2" side="bottom">
-				<div className="px-4">
-					<p className="text-sm">{user?.display_name}</p>
-					<p className="text-sm text-gray-500">{user?.email}</p>
+			<PopoverContent className="w-64 mt-2 p-3 bg-white rounded-2xl border border-[#C06350]/10 shadow-xl space-y-3" side="bottom" align="end">
+				<div className="px-3 py-2">
+					<p className="text-sm font-bold text-[#2D241E] font-montserrat">{user?.display_name}</p>
+					<p className="text-xs text-[#2D241E]/40 font-medium truncate">{user?.email}</p>
 				</div>
-				{!isAdmin && isSub && (
-					<ManageBill customerId={user?.stripe_customer_id!} />
-				)}
+        
+        <div className="space-y-1 pt-1">
+          {isAdmin && (
+            <Link href="/dashboard" className="block">
+              <Button
+                variant="ghost"
+                className="w-full flex justify-between items-center text-xs font-bold text-[#2D241E]/60 hover:text-[#C06350] hover:bg-[#C06350]/5 rounded-xl px-3"
+              >
+                Admin Dashboard <LayoutDashboard className="w-4 h-4" />
+              </Button>
+            </Link>
+          )}
 
-				{isAdmin && (
-					<Link href="/dashboard">
-						<Button
-							variant="ghost"
-							className="w-full flex justify-between items-center"
-						>
-							Dashboard <DashboardIcon />
-						</Button>
-					</Link>
-				)}
+          <Link href="/profile" className="block">
+            <Button
+              variant="ghost"
+              className="w-full flex justify-between items-center text-xs font-bold text-[#2D241E]/60 hover:text-[#C06350] hover:bg-[#C06350]/5 rounded-xl px-3"
+            >
+              My Profile <UserIcon className="w-4 h-4" />
+            </Button>
+          </Link>
 
-				<Button
-					variant="ghost"
-					className="w-full flex justify-between items-center"
-					onClick={handleLogout}
-				>
-					Log out <LockOpen1Icon />
-				</Button>
+          <Link href="/settings" className="block">
+            <Button
+              variant="ghost"
+              className="w-full flex justify-between items-center text-xs font-bold text-[#2D241E]/60 hover:text-[#C06350] hover:bg-[#C06350]/5 rounded-xl px-3"
+            >
+              Settings <SettingsIcon className="w-4 h-4" />
+            </Button>
+          </Link>
+
+          <Button
+            variant="ghost"
+            className="w-full flex justify-between items-center text-xs font-bold text-[#C06350] hover:bg-red-50 hover:text-red-500 rounded-xl px-3 transition-colors"
+            onClick={handleLogout}
+          >
+            Log out <LogOut className="w-4 h-4" />
+          </Button>
+        </div>
 			</PopoverContent>
 		</Popover>
 	);

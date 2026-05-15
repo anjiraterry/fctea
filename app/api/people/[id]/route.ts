@@ -9,9 +9,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       where: { id: params.id },
       include: {
         brand: true,
-        events: true,
-        blogs: true,
-        places: true
       }
     });
 

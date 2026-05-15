@@ -10,9 +10,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       include: {
         places: true,
         events: true,
-        people: true,
-        blogs: true,
-        news: true
+        news: true,
+        people: true
       }
     });
 

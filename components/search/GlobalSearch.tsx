@@ -8,7 +8,7 @@ import Link from "next/link";
 const TRENDING = [
   { icon: TrendingUp, label: "Rooftop Bars in Maitama",  href: "/places?q=rooftop", type: "Places" },
   { icon: TrendingUp, label: "Jazz Night at Transcorp",   href: "/events/jazz-night",  type: "Event" },
-  { icon: TrendingUp, label: "Hidden Gems – Gwarinpa",    href: "/explore",            type: "Explore" },
+  { icon: TrendingUp, label: "Hidden Gems Gwarinpa",    href: "/explore",            type: "Explore" },
   { icon: TrendingUp, label: "This Weekend in Abuja",     href: "/events",             type: "Events" },
 ];
 
